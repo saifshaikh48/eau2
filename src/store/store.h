@@ -49,7 +49,7 @@ public:
         s->serialize(home);
         s->serialize(name->size());
         s->serialize(name->size(), name->c_str());
-        
+
         return s->buffer;
     }
 
@@ -87,7 +87,7 @@ struct cmp_keys
 class Value {
 public:
     const char* serialized_data;
-    size_t size; 
+    size_t size;
 
     /** Constructs a value using a serialized df (char*). */
     Value(const char* s_d, size_t s) {
@@ -100,7 +100,7 @@ public:
         size = 0;
     }
 
-    Value() {}
+    // Value() {}
 
     size_t sizeof_serialized() {
         return size;
@@ -119,10 +119,7 @@ public:
     }
 };
 
-typedef struct arg_struct {
-    map<Key, Value, cmp_keys>* store;
-    NetworkIP* network_ip;
-}arg_t;
+
 
 /****************************************************************************
  * Value::
@@ -139,10 +136,9 @@ public:
     pthread_t tids[1];
 
     //Assumption: all key names in a kvs are unique
-    map<Key, Value, cmp_keys>* kv;
+    map<Key, Value, cmp_keys> kv;
 
-    KeyValueStore(int idx, int port, int num_nodes) { 
-        kv = new map<Key, Value, cmp_keys>();
+    KeyValueStore(int idx, int port, int num_nodes) {
         network = new NetworkIP();
         if (idx == 0) {
             network->server_init(idx, 8000, num_nodes);
@@ -162,7 +158,7 @@ public:
         // pthread_create(&tids[0], NULL, serve, (void*)&arguments);
     }
 
-    KeyValueStore() { 
+    KeyValueStore() {
         network = new NetworkIP();
         //network->server_init(0, 8000, 1);
     }
@@ -175,9 +171,9 @@ public:
     Value get(Key k) {
       // // Is this the home of this key
       if (network->index() == k.home) {
-        if (kv->count(k) > 0) {
+        if (kv.count(k) > 0) {
             printf("in here (node %zu) trying to get val for key %s\n", network->index(), k.name->c_str());
-            return kv->at(k);
+            return kv.at(k);
         }
         else {
             Value nf("NOT FOUND\0"); //ISSUE?
@@ -193,7 +189,7 @@ public:
         Message* request = new Message(network->index(), k.home, 'K', k.serialize(), k.sizeof_serialized());
         network->send_message(request);
         printf("in GET after sending message\n");
-        //send msg with serialize key from node 1 to node 2 
+        //send msg with serialize key from node 1 to node 2
         //node 1 deserializes value and return
         Message* response = network->recv_m();
 
@@ -212,8 +208,9 @@ public:
 
     /** Add a key value pair to this kv store. */
     bool put(Key k, Value v) {
-        kv->insert(std::pair<Key,Value>(k,v));
-        printf("inserted %s on node %zu\n", k.name->c_str(), k.home);
+        kv.insert(std::pair<Key,Value>(k,v));
+
+        //printf("inserted %s on node %zu\n", k.name->c_str(), k.home);
         return true;
     }
 
@@ -248,7 +245,7 @@ printf("key: %zu\n", k->sizeof_serialized());
 printf("looking for key named %s on node %zu\n", k->name->c_str(), k->home);
             Value val = get(*k);
 printf("val: %zu\n", val.sizeof_serialized());
-            //node 2 serializes value and and send msg 
+            //node 2 serializes value and and send msg
             Message* resp = new Message(network->index(), req->src, 'V', val.serialize(), val.sizeof_serialized());
             network->send_message(resp);
 printf("sent resp on THREAD\n");
@@ -316,7 +313,3 @@ class Request : public Message {
 
     }
 };
-
-
-
-

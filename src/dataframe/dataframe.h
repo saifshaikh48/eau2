@@ -570,41 +570,41 @@ public:
 
 
 
-class Response : public Message {
-public:
-    Value v;
-
-    Response(unsigned sender, unsigned receiver, Value val) {
-        type = 'V';
-        src = sender;
-        dest = receiver;
-        payload = " ";
-        v = val;
-    }
-
-    ~Response() {}
-
-    const char* serialize() {
-        printf("In RESP Serialize\n");
-        return v.serialize();
-    }
-
-    size_t sizeof_serialized() {
-      //deserialize df and return its size using method upon df (TODO)
-        DataFrame* d = DataFrame::deserialize(v.serialized_data);
-        size_t size = d->sizeof_serialized();
-        return size;
-    }
-
-    static Response* deserialize(const char* msg) {
-        Value* val = Value::deserialize(msg);
-
-        Response* message = new Response(0, 0, *val);
-
-        return message;
-
-    }
-};
+// class Response : public Message {
+// public:
+//     Value v;
+//
+//     Response(unsigned sender, unsigned receiver, Value val) {
+//         type = 'V';
+//         src = sender;
+//         dest = receiver;
+//         payload = " ";
+//         v = val;
+//     }
+//
+//     ~Response() {}
+//
+//     const char* serialize() {
+//         // printf("In RESP Serialize\n");
+//         return v.serialize();
+//     }
+//
+//     size_t sizeof_serialized() {
+//       //deserialize df and return its size using method upon df (TODO)
+//         DataFrame* d = DataFrame::deserialize(v.serialized_data);
+//         size_t size = d->sizeof_serialized();
+//         return size;
+//     }
+//
+//     static Response* deserialize(const char* msg) {
+//         Value* val = Value::deserialize(msg);
+//
+//         Response* message = new Response(0, 0, *val);
+//
+//         return message;
+//
+//     }
+// };
 
 
 
@@ -628,7 +628,7 @@ public:
 //             Key* k = Key::deserialize(req->payload);
 // printf("looking for key named %s on node %zu\n", k->name->c_str(), k->home);
 //             Value val = kv->at(*k);
-//             //node 2 serializes value and and send msg 
+//             //node 2 serializes value and and send msg
 //             Message* resp = new Message(network->index(), req->src, 'V', val.serialize(), val.sizeof_serialized());
 //             network->send_message(resp);
 // printf("sent resp on THREAD\n");

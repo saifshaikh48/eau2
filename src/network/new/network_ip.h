@@ -127,7 +127,7 @@ public:
 	}
 
 
-	
+
 	void send_message(Message* msg) {
 		NodeInfo & tgt = nodes_[msg->target()];
 
@@ -142,7 +142,7 @@ printf("WE HERE after connecting\n");
 
 		const char* buf = msg->serialize();
 		size_t size = msg->sizeof_serialized();
-	
+
 		send(conn, &size, sizeof(size_t), 0);
 		send(conn, buf, size, 0);
 	}
@@ -169,19 +169,19 @@ printf("WE HERE after connecting\n");
 			assert(false);
 		}
 
-		printf("Connected\n");
+		// printf("Connected\n");
 
 		const char* buf = msg->serialize();
-		printf("Created serialized message\n");
+		// printf("Created serialized message\n");
 
 		size_t size = msg->sizeof_serialized();
 
 
 		send(conn, &size, sizeof(size_t), 0);
-		printf("Sent Directory Size\n");
+		// printf("Sent Directory Size\n");
 
 		send(conn, buf, size, 0);
-		printf("Sent Directory message\n");
+		// printf("Sent Directory message\n");
 	}
 
 	void send_m(Register* msg)  {
@@ -198,31 +198,31 @@ printf("WE HERE after connecting\n");
 		size_t size = msg->sizeof_serialized() + 1000;
 
 		send(conn, &size, sizeof(size_t), 0);
-		printf("sent size of register serialized msg\n");
+		// printf("sent size of register serialized msg\n");
 
 
 		send(conn, buf, size, 0);
-		printf("sent serialized register\n");
+		// printf("sent serialized register\n");
 
 	}
 
 	Message* recv_m()  {
 		sockaddr_in sender;
 		socklen_t addrlen = sizeof(sender);
-		printf("b4 accepting\n");
+		// printf("b4 accepting\n");
 		int req = accept(sock_, (sockaddr*)&sender, &addrlen);
 		size_t size = 0;
-		printf("b4 reading\n");
+		// printf("b4 reading\n");
 		if(read(req, &size, sizeof(size_t)) == 0) {
 			assert(false);
 		}
 		char* buf = new char[size];
 		int rd = 0;
-		printf("b4 second read\n");
+		// printf("b4 second read\n");
 		while (rd != size) {
 			rd += read(req, buf + rd, size - rd);
 		}
-		printf("b4 deserializing\n");
+		// printf("b4 deserializing\n");
 		Message* msg = Message::deserialize(buf);
 
 		return msg;
@@ -248,13 +248,13 @@ printf("WE HERE after connecting\n");
 	}
 
 	Directory* recv_directory()  {
-		printf("In recv dir\n");
+		// printf("In recv dir\n");
 
 		sockaddr_in sender;
 		socklen_t addrlen = sizeof(sender);
 		int req = accept(sock_, (sockaddr*)&sender, &addrlen);
 		size_t size = 0;
-		printf("accepted connection with: %hu\n", ntohs(sender.sin_addr.s_addr));
+		// printf("accepted connection with: %hu\n", ntohs(sender.sin_addr.s_addr));
 
 		if(read(req, &size, sizeof(size_t)) == 0) {
 			assert(false);
@@ -266,8 +266,8 @@ printf("WE HERE after connecting\n");
 			rd += read(req, buf + rd, size - rd);
 		}
 		Directory* msg = Directory::deserialize(buf);
-		printf("TYPE: %c\n", msg->type);
-		printf("Size Dir: %zu\n", msg->size_dir);
+		// printf("TYPE: %c\n", msg->type);
+		// printf("Size Dir: %zu\n", msg->size_dir);
 		//printf("Addresses: %s\n", msg->addresses[0]);
 
 		return msg;

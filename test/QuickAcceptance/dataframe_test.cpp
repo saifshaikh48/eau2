@@ -130,6 +130,7 @@
 
 
 
+
    /** Add row to the end of a DataFrame. */
    Row row_non_empty(non_empty);
    row_non_empty.set(0, false);
@@ -147,11 +148,13 @@
 
    dataframe_tests += 5;
 
+
    /** Serialization Tests shown in serial_test.cpp. */
 
    /** Constructing a dataframe from bool array. */
    KeyValueStore* kvs = new KeyValueStore();
    Key* bool_key = new Key("FromBoolArray", 0);
+
 
    bool* bool_vals = new bool[5];
    bool_vals[0] = false;
@@ -160,12 +163,15 @@
    bool_vals[3] = true;
    bool_vals[4] = false;
 
+
    DataFrame* bool_arr = DataFrame::fromArray(bool_key, kvs, 5, bool_vals);
+
    Schema& bool_arr_schema = bool_arr->get_schema();
    assert(bool_arr_schema.ncols == 1);
    assert(bool_arr_schema.nrows == 5);
    assert(!bool_arr->get_bool(0, 2));
    dataframe_tests += 3;
+
 
    /** Constructing a dataframe from int array. */
    Key* int_key = new Key("FromIntArray", 0);

@@ -20,7 +20,7 @@ public:
 		dest = receiver;
 		payload = serialized_data;
 		payload_size = size_of_serialized;
-		printf("THIS IS MESSAGE SIZE OF SERIALIZED: %zu\n", payload_size);
+		//printf("THIS IS MESSAGE SIZE OF SERIALIZED: %zu\n", payload_size);
 	}
 
 	Message() {
@@ -35,21 +35,20 @@ public:
 
 	//should add serialization and deserialization
  	const char* serialize() {
-		printf("In Message Serialize\n");
+		//printf("In Message Serialize\n");
 		Serialize* serial = new Serialize();
 		serial->serialize(type);
 		serial->serialize(src);
 		serial->serialize(dest);
 
 //TODO: IMPORTANT THIS IS NOT WORKING
-printf("adlmasldals |||||         %zu\n", payload_size);
 		serial->serialize(payload_size);
 		serial->serialize(payload_size,payload);
 		return serial->buffer;
 	}
 
 	size_t sizeof_serialized() {
-		return (2 * sizeof(unsigned)) + sizeof(char) 
+		return (2 * sizeof(unsigned)) + sizeof(char)
 		+ sizeof(size_t) + payload_size * sizeof(char) * 2;
 	}
 
@@ -69,18 +68,18 @@ printf("adlmasldals |||||         %zu\n", payload_size);
 
 		size_t p_size = Deserialize::deserialize_size_t(msg + buff_size);
 		buff_size += sizeof(p_size);
-    
-    printf("%c\n", type);
-    printf("%u\n", src);
-    printf("%u\n", dest);
-    printf("%zu\n", p_size);
+
+    // printf("%c\n", type);
+    // printf("%u\n", src);
+    // printf("%u\n", dest);
+    // printf("%zu\n", p_size);
 
 
 		char* payload = Deserialize::deserialize(msg + buff_size, p_size);
 		buff_size += sizeof(payload);
-   
 
-    printf("%s\n", payload);
+
+    // printf("%s\n", payload);
 
 
 		Message* message = new Message(src, dest, type, payload, p_size);
@@ -122,7 +121,7 @@ public:
 
 
 		const char* serialize() {
-			printf("In register Serialize\n");
+			// printf("In register Serialize\n");
 
 			Serialize* serial = new Serialize();
 
@@ -184,8 +183,8 @@ public:
 			 serial->serialize(ports[i]);
 		 }
 		 for (size_t i = 0; i < size_dir; i++) {
-			 printf("size of address: %zu\n", strlen(addresses[i]));
-			 printf("address: %s\n", addresses[i]);
+			 // printf("size of address: %zu\n", strlen(addresses[i]));
+			 // printf("address: %s\n", addresses[i]);
 
 			 serial->serialize(7, addresses[i]);
 		 }
@@ -196,17 +195,17 @@ public:
 
 	 static Directory* deserialize(const char* message) {
 		 size_t buff_size = 0;
-		 printf("deserializing directory\n");
+		 // printf("deserializing directory\n");
 
 		 size_t size_dir = Deserialize::deserialize_size_t(message + buff_size);
 		 buff_size = sizeof(size_t);
 
-		 printf("deserialized size dir: %zu\n", size_dir);
+		 // printf("deserialized size dir: %zu\n", size_dir);
 
 		 size_t* ports = new size_t[size_dir];
 		 for (size_t i = 0; i < size_dir; i++) {
 			 ports[i] = Deserialize::deserialize_size_t(message + buff_size);
-			 printf("deserialized port %zu: %zu\n", i, ports[i]);
+			 // printf("deserialized port %zu: %zu\n", i, ports[i]);
 
 			 buff_size += sizeof(size_t);
 		 }
@@ -217,7 +216,7 @@ public:
 			 //std::string addr = "127.0.0." + std::to_string(i);
 			 //addresses[i] = addr.c_str();
 			 addresses[i] = "127.0.0.1";
-			 printf("deserialized address %zu: %s\n", i, addresses[i]);
+			 // printf("deserialized address %zu: %s\n", i, addresses[i]);
 
 			 buff_size += 7;
 		 }
