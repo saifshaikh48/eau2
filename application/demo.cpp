@@ -33,14 +33,21 @@ public:
     int* vals = new int[SZ];
     int sum = 0;
     for (size_t i = 0; i < SZ; ++i) sum += vals[i] = i;
-    DataFrame::fromArray(&main, kv, SZ, vals);    
+
+
+    DataFrame::fromArray(&main, kv, SZ, vals);
     DataFrame::fromScalar(&check, kv, sum);
+
     kv->run();
+    // DataFrame* v = DataFrame::deserialize(kv->get(main).serialized_data);
+    // printf("Got dataframe\n");
+    // printf("Dataframe num rows: %zu\n",v->schema_->nrows);
   }
 
   void counter() {
     printf("in counter on node %zu\n", index);
     DataFrame* v = DataFrame::deserialize(kv->waitAndGet(main).serialized_data);
+
     int sum = 0;
     for (size_t i = 0; i < 100*1000; ++i) sum += v->get_int(0,i);
     printf("The sums is %d\n", sum);
@@ -84,7 +91,7 @@ int main (int argc, char* argv[]) {
   // //spawn 3 threads to run separate client applications and kvs for demo.
   // int num_threads = 3;
   // pthread_t tids[num_threads];
-  
+
   // // create threads while passing in node id to be used by application.
   // for(int k = 0; k < num_threads; k++){
   //     struct_t* arguments = (struct_t*)(malloc(sizeof(struct_t)));
@@ -93,7 +100,7 @@ int main (int argc, char* argv[]) {
 
   //     pthread_create(&tids[k], NULL, distribute, arguments);
   // }
-  
+
   // for(int l = 0; l < num_threads; l++){
   //     pthread_join(tids[l],NULL);
   // }

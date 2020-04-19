@@ -39,6 +39,8 @@ public:
 
     Key() {}
 
+    ~Key() {}
+
     size_t sizeof_serialized() {
         size_t size = sizeof(size_t) * 2 + name->size() * sizeof(char) * 2;
         return size;
@@ -100,7 +102,10 @@ public:
         size = 0;
     }
 
-    // Value() {}
+    Value() {}
+
+    ~Value() {}
+
 
     size_t sizeof_serialized() {
         return size;
@@ -149,7 +154,6 @@ public:
 
         //spawn thread with a loop that waits on requests and serves them
 
-
         // create threads while passing in node id to be used by application.
         // arg_t arguments;
         // arguments.store = kv;
@@ -164,7 +168,6 @@ public:
     }
 
     ~KeyValueStore() {
-        //pthread_join(tids[0],NULL);
     }
 
     /** Get a value from this kv store using a specified key. */
@@ -196,14 +199,6 @@ public:
         return *Value::deserialize(response->payload);
       }
 
-        // try {
-        //     Value val = kv.at(k);
-        //     return val;
-        // }
-        // // TODO: avoid using exceptions
-        // catch (const std::out_of_range& oor) {
-        //     return NULL;
-        // }
     }
 
     /** Add a key value pair to this kv store. */
@@ -216,100 +211,80 @@ public:
 
     /** Waits for a non-null return value and returns that value. */
     Value waitAndGet(Key k) {
-        // assert(get(k));
-        //return get(k);
-
         // wait and notify methods found in thread class
 
         Value v = get(k);
         while (strcmp(v.serialized_data, "NOT FOUND\0") == 0) {
-            printf("waitAndGet NOT FOUND\n");
+            // printf("waitAndGet NOT FOUND\n");
           v = get(k);
         }
         return v;
     }
 
     void run() {
-//         arg_t* arguments = (arg_t*) args;
-
-//         NetworkIP* this_network = arguments->network_ip;
-//         map<Key, Value, cmp_keys>* this_store = arguments->store;
-// printf("%zu\n", this_network->this_node_);
         while (1) {
-printf("waiting for msg in THREAD\n");
             //node 2 deserializes key, gets value from its kv store
             Message* req = network->recv_m();
-printf("recv req on THREAD\n");
             Key* k = Key::deserialize(req->payload);
-printf("key: %zu\n", k->sizeof_serialized());
-printf("looking for key named %s on node %zu\n", k->name->c_str(), k->home);
-            Value val = get(*k);
-printf("val: %zu\n", val.sizeof_serialized());
+            Value val = waitAndGet(*k);
             //node 2 serializes value and and send msg
             Message* resp = new Message(network->index(), req->src, 'V', val.serialize(), val.sizeof_serialized());
             network->send_message(resp);
-printf("sent resp on THREAD\n");
         }
     }
 };
 
 
 
-
-class Request : public Message {
-    Key k;
-
-    Request(unsigned sender, unsigned receiver, Key key) {
-        type = 'K';
-        src = sender;
-        dest = receiver;
-        payload = " ";
-        k = key;
-    }
-
-    ~Request() {}
-
-    const char* serialize() {
-        printf("In REQ Serialize\n");
-        Serialize* serial = new Serialize();
-        serial->serialize(type);
-        serial->serialize(src);
-        serial->serialize(dest);
-
-        serial->serialize(k.home);
-        serial->serialize(k.name->size(), k.name->c_str());
-
-        return serial->buffer;
-    }
-
-    size_t sizeof_serialized() {
-        return (2 * sizeof(unsigned)) + sizeof(char) * 2
-        + sizeof(size_t) + k.name->size() * sizeof(char) * 2;
-    }
-
-    static Request* deserialize(const char* msg) {
-        size_t buff_size = 0;
-
-        char type = Deserialize::deserialize_char(msg);
-        buff_size += sizeof(type);
-
-        unsigned src = Deserialize::deserialize_unsigned(msg + buff_size);
-        buff_size += sizeof(src);
-
-        unsigned dest = Deserialize::deserialize_unsigned(msg + buff_size);
-        buff_size += sizeof(dest);
-
-        Key* key = Key::deserialize(msg + buff_size);
-    printf("%c\n", type);
-    printf("%u\n", src);
-    printf("%u\n", dest);
-    printf("%s\n", key->name->c_str());
-    printf("%zu\n", key->name->size());
-    printf("%zu\n", key->home);
-
-        Request* message = new Request(src, dest, *key);
-
-        return message;
-
-    }
-};
+//
+// class Request : public Message {
+//     Key k;
+//
+//     Request(unsigned sender, unsigned receiver, Key key) {
+//         type = 'K';
+//         src = sender;
+//         dest = receiver;
+//         payload = " ";
+//         k = key;
+//     }
+//
+//     ~Request() {}
+//
+//     const char* serialize() {
+//         printf("In REQ Serialize\n");
+//         Serialize* serial = new Serialize();
+//         serial->serialize(type);
+//         serial->serialize(src);
+//         serial->serialize(dest);
+//
+//         serial->serialize(k.home);
+//         serial->serialize(k.name->size(), k.name->c_str());
+//
+//         return serial->buffer;
+//     }
+//
+//     size_t sizeof_serialized() {
+//         return (2 * sizeof(unsigned)) + sizeof(char) * 2
+//         + sizeof(size_t) + k.name->size() * sizeof(char) * 2;
+//     }
+//
+//     static Request* deserialize(const char* msg) {
+//         size_t buff_size = 0;
+//
+//         char type = Deserialize::deserialize_char(msg);
+//         buff_size += sizeof(type);
+//
+//         unsigned src = Deserialize::deserialize_unsigned(msg + buff_size);
+//         buff_size += sizeof(src);
+//
+//         unsigned dest = Deserialize::deserialize_unsigned(msg + buff_size);
+//         buff_size += sizeof(dest);
+//
+//         Key* key = Key::deserialize(msg + buff_size);
+//
+//         Request* message = new Request(src, dest, *key);
+//
+//         return message;
+//
+//     }
+// };

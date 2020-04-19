@@ -93,7 +93,6 @@ public:
 
 		send_m(&msg);
 
-		// Directory* ipd = dynamic_cast<Directory*>(recv_m());
 		Directory* ipd = recv_directory();
 		printf("directory receieved\n");
 
@@ -108,9 +107,7 @@ public:
 			if (inet_pton(AF_INET, ipd->addresses[i], &nodes[i+1].address.sin_addr) <= 0) {
 				assert(false);
 			}
-			//delete[] nodes_;
 			nodes_ = nodes;
-			//delete ipd;
 		}
 	}
 
@@ -132,13 +129,12 @@ public:
 		NodeInfo & tgt = nodes_[msg->target()];
 
 		inet_aton("127.0.0.1", &tgt.address.sin_addr);
-printf("WE HERE in send_message\n");
+
 		int conn = socket(AF_INET, SOCK_STREAM, 0);
 		assert(conn >= 0 && "UNABLE TO CREATE CLIENT SOCKET");
 		if (connect(conn, (sockaddr*)&tgt.address, sizeof(struct sockaddr)) < 0) {
 			assert(false);
 		}
-printf("WE HERE after connecting\n");
 
 		const char* buf = msg->serialize();
 		size_t size = msg->sizeof_serialized();
@@ -150,16 +146,6 @@ printf("WE HERE after connecting\n");
 	void send_m(Directory* msg)  {
 
 		NodeInfo & tgt = nodes_[msg->target()];
-
-		// printf("target: %u\n", msg->target());
-		// printf("address: %u\n", tgt.address.sin_addr.s_addr);
-		// printf("tgt.id: %u\n", tgt.id);
-		// printf("port: %u\n", ntohs(tgt.address.sin_port));
-
-		// tgt.id = 1;
-		// tgt.address.sin_addr.s_addr = 1;
-		// tgt.address.sin_family = AF_INET;
-		// tgt.address.sin_port = htons(8001);
 		inet_aton("127.0.0.1", &tgt.address.sin_addr);
 
 		int conn = socket(AF_INET, SOCK_STREAM, 0);
@@ -169,19 +155,11 @@ printf("WE HERE after connecting\n");
 			assert(false);
 		}
 
-		// printf("Connected\n");
-
 		const char* buf = msg->serialize();
-		// printf("Created serialized message\n");
-
 		size_t size = msg->sizeof_serialized();
-
-
+		
 		send(conn, &size, sizeof(size_t), 0);
-		// printf("Sent Directory Size\n");
-
 		send(conn, buf, size, 0);
-		// printf("Sent Directory message\n");
 	}
 
 	void send_m(Register* msg)  {
@@ -198,31 +176,24 @@ printf("WE HERE after connecting\n");
 		size_t size = msg->sizeof_serialized() + 1000;
 
 		send(conn, &size, sizeof(size_t), 0);
-		// printf("sent size of register serialized msg\n");
-
 
 		send(conn, buf, size, 0);
-		// printf("sent serialized register\n");
 
 	}
 
 	Message* recv_m()  {
 		sockaddr_in sender;
 		socklen_t addrlen = sizeof(sender);
-		// printf("b4 accepting\n");
 		int req = accept(sock_, (sockaddr*)&sender, &addrlen);
 		size_t size = 0;
-		// printf("b4 reading\n");
 		if(read(req, &size, sizeof(size_t)) == 0) {
 			assert(false);
 		}
 		char* buf = new char[size];
 		int rd = 0;
-		// printf("b4 second read\n");
 		while (rd != size) {
 			rd += read(req, buf + rd, size - rd);
 		}
-		// printf("b4 deserializing\n");
 		Message* msg = Message::deserialize(buf);
 
 		return msg;
@@ -248,13 +219,11 @@ printf("WE HERE after connecting\n");
 	}
 
 	Directory* recv_directory()  {
-		// printf("In recv dir\n");
 
 		sockaddr_in sender;
 		socklen_t addrlen = sizeof(sender);
 		int req = accept(sock_, (sockaddr*)&sender, &addrlen);
 		size_t size = 0;
-		// printf("accepted connection with: %hu\n", ntohs(sender.sin_addr.s_addr));
 
 		if(read(req, &size, sizeof(size_t)) == 0) {
 			assert(false);
@@ -266,9 +235,6 @@ printf("WE HERE after connecting\n");
 			rd += read(req, buf + rd, size - rd);
 		}
 		Directory* msg = Directory::deserialize(buf);
-		// printf("TYPE: %c\n", msg->type);
-		// printf("Size Dir: %zu\n", msg->size_dir);
-		//printf("Addresses: %s\n", msg->addresses[0]);
 
 		return msg;
 	}
