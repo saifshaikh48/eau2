@@ -26,7 +26,7 @@ class Trivial : public Application {
 
     assert(df->get_int(0,1) == 1);
 
-    DataFrame* df2 = DataFrame::deserialize(kv->get(key).serialized_data); //TODO: change .get() return type to dataframe
+    DataFrame* df2 = DataFrame::deserialize(kv->get(key).serialized_data); 
 
     for (size_t i = 0; i < SZ; ++i) sum -= df2->get_int(0,i);
 

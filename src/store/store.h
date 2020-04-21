@@ -178,7 +178,7 @@ public:
             return kv.at(k);
         }
         else {
-            Value nf("NOT FOUND\0"); //ISSUE?
+            Value nf("NOT FOUND\0");
             return nf;
         }
       }
@@ -195,7 +195,6 @@ public:
 
         return *Value::deserialize(response->payload);
       }
-
     }
 
     /** Add a key value pair to this kv store. */
