@@ -104,9 +104,11 @@ Solution Structure:
   * Our data parser that converts text files into dataframes currently assumes the data is space separated; this must be modified to support the schema-on-read format and also refactored into its own class.
 
 3. To Be Completed:
-  * Finalize networking layer by fixing minor bugs preventing socket connections. (sending directory messages to all registered nodes).
+  * <del>Finalize networking layer by fixing minor bugs preventing socket connections. (sending directory messages to all registered nodes).</del>
 
   * The distributed nature of the data needs to be incorporated into our storage structures. Logic needs to be added to split dataframe components like columns into chunks that can be stored across the network.
 
-  * WaitAndGet() is not fully implemented due to a lacking networking implementation.
-    * Our underlying Key and Value classes need to be <del>created and</del> hooked up to the revamped network layer.
+  * <del>WaitAndGet() is not fully implemented due to a lacking networking implementation.</del>
+    * <del>Our underlying Key and Value classes need to be created and hooked up to the revamped network layer.</del>
+
+  * Threaded response in KeyValueStore. (We really tried our best.)
