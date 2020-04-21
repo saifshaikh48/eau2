@@ -30,8 +30,22 @@ run:
 	- ./dataframe_test
 	- ./serial_test
 	- ./kvs_test
-	- ./demo_app
 	- ./trivial_app
+	- ./demo_app
+
+mem:
+
+	- valgrind ./old_tests
+	- valgrind ./row_test
+	- valgrind ./column_test
+	- valgrind ./schema_test
+	- valgrind ./dataframe_test
+	- valgrind ./serial_test
+	- valgrind ./kvs_test
+	- valgrind ./demo_app
+	- valgrind ./trivial_app
+
+
 
 testdemo:
 	- g++ -std=c++11 ./application/demo.cpp -o demo_app

@@ -175,7 +175,6 @@ public:
       // // Is this the home of this key
       if (network->index() == k.home) {
         if (kv.count(k) > 0) {
-            printf("in here (node %zu) trying to get val for key %s\n", network->index(), k.name->c_str());
             return kv.at(k);
         }
         else {
@@ -188,10 +187,8 @@ public:
         // send message to owner
         // wait on a reply
         // Return get value using home node matching with key home node
-        printf("in GET before else case for KEY %s on node %zu\n",k.name->c_str(),k.home);
         Message* request = new Message(network->index(), k.home, 'K', k.serialize(), k.sizeof_serialized());
         network->send_message(request);
-        printf("in GET after sending message\n");
         //send msg with serialize key from node 1 to node 2
         //node 1 deserializes value and return
         Message* response = network->recv_m();
@@ -214,6 +211,8 @@ public:
         // wait and notify methods found in thread class
 
         Value v = get(k);
+
+
         while (strcmp(v.serialized_data, "NOT FOUND\0") == 0) {
             // printf("waitAndGet NOT FOUND\n");
           v = get(k);
@@ -226,10 +225,14 @@ public:
             //node 2 deserializes key, gets value from its kv store
             Message* req = network->recv_m();
             Key* k = Key::deserialize(req->payload);
+            printf("Key name: %s\n", k->name->c_str());
+            printf("Key home: %zu\n", k->home);
+
             Value val = waitAndGet(*k);
-            //node 2 serializes value and and send msg
-            Message* resp = new Message(network->index(), req->src, 'V', val.serialize(), val.sizeof_serialized());
-            network->send_message(resp);
+            printf("Value :%s\n", val.serialized_data);
+            // //node 2 serializes value and and send msg
+            // Message* resp = new Message(network->index(), req->src, 'V', val.serialize(), val.sizeof_serialized());
+            // network->send_message(resp);
         }
     }
 };

@@ -39,15 +39,12 @@ public:
     DataFrame::fromScalar(&check, kv, sum);
 
     kv->run();
-    // DataFrame* v = DataFrame::deserialize(kv->get(main).serialized_data);
-    // printf("Got dataframe\n");
-    // printf("Dataframe num rows: %zu\n",v->schema_->nrows);
   }
 
   void counter() {
+
     printf("in counter on node %zu\n", index);
     DataFrame* v = DataFrame::deserialize(kv->waitAndGet(main).serialized_data);
-
     int sum = 0;
     for (size_t i = 0; i < 100*1000; ++i) sum += v->get_int(0,i);
     printf("The sums is %d\n", sum);
