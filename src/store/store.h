@@ -138,7 +138,7 @@ public:
 
     // Instance of network to communicate
     NetworkIP* network;
-    pthread_t tids[1];
+    // pthread_t tids[1];
 
     //Assumption: all key names in a kvs are unique
     map<Key, Value, cmp_keys> kv;
