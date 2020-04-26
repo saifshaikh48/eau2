@@ -84,15 +84,15 @@ public:
 
     /** Serializes char value. */
     //TODO: remove
-    const char* serialize(char* c) {
-        size_t size = sizeof(char*);
-
-        update_buffer(size);
-        memcpy(buffer + idx, &c, size);
-
-        idx += size;
-        return buffer;
-    }
+    // const char* serialize(char* c) {
+    //     size_t size = sizeof(char*);
+    //
+    //     update_buffer(size);
+    //     memcpy(buffer + idx, &c, size);
+    //
+    //     idx += size;
+    //     return buffer;
+    // }
 
     /** Serializes char array. */
     const char* serialize(size_t len_array,  char* array) {

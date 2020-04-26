@@ -35,15 +35,15 @@ run:
 
 mem:
 
-	- valgrind ./old_tests
-	- valgrind ./row_test
-	- valgrind ./column_test
-	- valgrind ./schema_test
-	- valgrind ./dataframe_test
-	- valgrind ./serial_test
-	- valgrind ./kvs_test
-	- valgrind ./demo_app
-	- valgrind ./trivial_app
+	# - valgrind --leak-check=<summary>  ./old_tests
+	# - valgrind --leak-check=<summary>  ./row_test
+	- valgrind  ./column_test
+	# - valgrind --leak-check=<summary>  ./schema_test
+	# - valgrind --leak-check=<summary>  ./dataframe_test
+	# - valgrind --leak-check=<summary>  ./serial_test
+	# - valgrind --leak-check=<summary>  ./kvs_test
+	# - valgrind --leak-check=<summary>  ./demo_app
+	# - valgrind --leak-check=<summary>  ./trivial_app
 
 
 

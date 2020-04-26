@@ -38,7 +38,7 @@ public:
     DataFrame::fromArray(&main, kv, SZ, vals);
     DataFrame::fromScalar(&check, kv, sum);
 
-    kv->run();
+    kv->run(); //Move outside -> run a thread for KV store before application thread
   }
 
   void counter() {
